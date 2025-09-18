@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>초간단 Proxy 예제</title>
+    <span id="display">0</span>
+    <div>
+        <!-- 1) 증가 버튼 클릭, increase 실행 -->
+        <button onclick="increase()">➕ 증가</button>
+        <button onclick="decrease()">➖ 감소</button>
+        <button onclick="reset()">🔄 리셋</button>
+    </div>
+</head>
+<body>
+    <div id="root"></div>
+    <script>
+        // target 이 대상 객체, count 가 속성
+        const target = { count: 0 };
+
+        function updateDisplay(){
+            document.getElementById('display').textContent = target.count; 
+        }
+
+        const handler = {
+            // target : 대상 객체
+            // property : 객체 속성
+            // value : Proxy의 set 트랩이 실행되기 전에 이미 계산된 새로운 값
+
+            // JS 엔진은 새로운 값(을 이미 계산해서, set 에 value 로 전달
+            set(target, property, value){
+                target[property] = value; 
+                updateDisplay() // 화면 반영
+                return true; 
+            }
+        }
+
+        const reactiveTarget = new Proxy(target, handler)
+
+        // 2. increase 함수 실행
+        function increase(){
+            // reactiveTarget 는 target 을 감싸고 있는 proxy 객체
+            // ++ 에서 값이 변경될 때 handler 의 set 트랩 호출
+            reactiveTarget.count++; 
+        }
+
+        function decrease(){
+            reactiveTarget.count--; 
+        }
+
+        function reset(){
+            reactiveTarget.count = 0; 
+        }
+    </script>
+</body>
+</html>
