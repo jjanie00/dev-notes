@@ -8,3 +8,6 @@ setTimeout(() => {
 }, 1000);
 
 console.log(3); 
+
+// 출력
+// 1 3 2 
